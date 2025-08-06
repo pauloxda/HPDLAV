@@ -30,7 +30,7 @@ class WashRegistration(BaseModel):
     data: str  # Date in YYYY-MM-DD format
     tipo_veiculo: str
     area_negocio: str
-    lavador: str
+    lavadores: List[str]  # Changed to list of washers
     tipo_lavagem: str
     empresa_tipo: str  # "interna" or "externa"
     empresa_nome: str
@@ -44,7 +44,7 @@ class WashRegistrationCreate(BaseModel):
     data: str
     tipo_veiculo: str
     area_negocio: str
-    lavador: str
+    lavadores: List[str]  # Changed to list of washers
     tipo_lavagem: str
     empresa_tipo: str
     empresa_nome: str
@@ -71,6 +71,14 @@ class ExternalCompanyCreate(BaseModel):
 
 class AuthRequest(BaseModel):
     password: str
+
+class WashStats(BaseModel):
+    total_lavagens: int
+    total_valor: float
+    por_tipo_veiculo: dict
+    por_area_negocio: dict
+    por_lavador: dict
+    por_tipo_lavagem: dict
 
 # Auth endpoint
 @api_router.post("/auth")
@@ -113,6 +121,141 @@ async def get_month_washes(year: int, month: int):
             continue
     return month_washes
 
+@api_router.get("/lavagens/stats", response_model=WashStats)
+async def get_wash_stats():
+    lavagens = await db.lavagens.find().to_list(1000)
+    
+    total_lavagens = len(lavagens)
+    total_valor = sum([lavagem.get("valor", 0) for lavagem in lavagens])
+    
+    # Stats by type
+    por_tipo_veiculo = {}
+    por_area_negocio = {}
+    por_lavador = {}
+    por_tipo_lavagem = {}
+    
+    for lavagem in lavagens:
+        # Vehicle type stats
+        tipo = lavagem.get("tipo_veiculo", "N/A")
+        por_tipo_veiculo[tipo] = por_tipo_veiculo.get(tipo, 0) + 1
+        
+        # Business area stats
+        area = lavagem.get("area_negocio", "N/A")
+        por_area_negocio[area] = por_area_negocio.get(area, 0) + 1
+        
+        # Washer stats (handle multiple washers)
+        lavadores = lavagem.get("lavadores", [])
+        if isinstance(lavadores, list):
+            for lavador in lavadores:
+                por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+        else:
+            # Backward compatibility
+            lavador = lavadores if lavadores else "N/A"
+            por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+            
+        # Wash type stats
+        tipo_lav = lavagem.get("tipo_lavagem", "N/A")
+        por_tipo_lavagem[tipo_lav] = por_tipo_lavagem.get(tipo_lav, 0) + 1
+    
+    return WashStats(
+        total_lavagens=total_lavagens,
+        total_valor=total_valor,
+        por_tipo_veiculo=por_tipo_veiculo,
+        por_area_negocio=por_area_negocio,
+        por_lavador=por_lavador,
+        por_tipo_lavagem=por_tipo_lavagem
+    )
+
+@api_router.get("/lavagens/stats/today", response_model=WashStats)
+async def get_today_stats():
+    today = datetime.now().strftime("%Y-%m-%d")
+    lavagens = await db.lavagens.find({"data": today}).to_list(1000)
+    
+    total_lavagens = len(lavagens)
+    total_valor = sum([lavagem.get("valor", 0) for lavagem in lavagens])
+    
+    # Stats by type for today
+    por_tipo_veiculo = {}
+    por_area_negocio = {}
+    por_lavador = {}
+    por_tipo_lavagem = {}
+    
+    for lavagem in lavagens:
+        tipo = lavagem.get("tipo_veiculo", "N/A")
+        por_tipo_veiculo[tipo] = por_tipo_veiculo.get(tipo, 0) + 1
+        
+        area = lavagem.get("area_negocio", "N/A")
+        por_area_negocio[area] = por_area_negocio.get(area, 0) + 1
+        
+        lavadores = lavagem.get("lavadores", [])
+        if isinstance(lavadores, list):
+            for lavador in lavadores:
+                por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+        else:
+            lavador = lavadores if lavadores else "N/A"
+            por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+            
+        tipo_lav = lavagem.get("tipo_lavagem", "N/A")
+        por_tipo_lavagem[tipo_lav] = por_tipo_lavagem.get(tipo_lav, 0) + 1
+    
+    return WashStats(
+        total_lavagens=total_lavagens,
+        total_valor=total_valor,
+        por_tipo_veiculo=por_tipo_veiculo,
+        por_area_negocio=por_area_negocio,
+        por_lavador=por_lavador,
+        por_tipo_lavagem=por_tipo_lavagem
+    )
+
+@api_router.get("/lavagens/stats/month/{year}/{month}", response_model=WashStats)
+async def get_month_stats(year: int, month: int):
+    lavagens = await db.lavagens.find().to_list(1000)
+    month_washes = []
+    
+    for lavagem in lavagens:
+        try:
+            wash_date = datetime.strptime(lavagem["data"], "%Y-%m-%d")
+            if wash_date.year == year and wash_date.month == month:
+                month_washes.append(lavagem)
+        except:
+            continue
+    
+    total_lavagens = len(month_washes)
+    total_valor = sum([lavagem.get("valor", 0) for lavagem in month_washes])
+    
+    # Stats by type for month
+    por_tipo_veiculo = {}
+    por_area_negocio = {}
+    por_lavador = {}
+    por_tipo_lavagem = {}
+    
+    for lavagem in month_washes:
+        tipo = lavagem.get("tipo_veiculo", "N/A")
+        por_tipo_veiculo[tipo] = por_tipo_veiculo.get(tipo, 0) + 1
+        
+        area = lavagem.get("area_negocio", "N/A")
+        por_area_negocio[area] = por_area_negocio.get(area, 0) + 1
+        
+        lavadores = lavagem.get("lavadores", [])
+        if isinstance(lavadores, list):
+            for lavador in lavadores:
+                por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+        else:
+            lavador = lavadores if lavadores else "N/A"
+            por_lavador[lavador] = por_lavador.get(lavador, 0) + 1
+            
+        tipo_lav = lavagem.get("tipo_lavagem", "N/A")
+        por_tipo_lavagem[tipo_lav] = por_tipo_lavagem.get(tipo_lav, 0) + 1
+    
+    return WashStats(
+        total_lavagens=total_lavagens,
+        total_valor=total_valor,
+        por_tipo_veiculo=por_tipo_veiculo,
+        por_area_negocio=por_area_negocio,
+        por_lavador=por_lavador,
+        por_tipo_lavagem=por_tipo_lavagem
+    )
+
 @api_router.delete("/lavagens/{wash_id}")
 async def delete_wash_registration(wash_id: str):
     result = await db.lavagens.delete_one({"id": wash_id})
@@ -138,6 +281,13 @@ async def get_custom_washers():
     lavadores = await db.lavadores.find().sort("nome", 1).to_list(1000)
     return [CustomWasher(**lavador) for lavador in lavadores]
 
+@api_router.delete("/lavadores/{washer_id}")
+async def delete_custom_washer(washer_id: str):
+    result = await db.lavadores.delete_one({"id": washer_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Lavador não encontrado")
+    return {"message": "Lavador eliminado com sucesso"}
+
 # External companies endpoints
 @api_router.post("/empresas-externas", response_model=ExternalCompany)
 async def add_external_company(company: ExternalCompanyCreate):
@@ -155,6 +305,13 @@ async def add_external_company(company: ExternalCompanyCreate):
 async def get_external_companies():
     empresas = await db.empresas_externas.find().sort("nome", 1).to_list(1000)
     return [ExternalCompany(**empresa) for empresa in empresas]
+
+@api_router.delete("/empresas-externas/{company_id}")
+async def delete_external_company(company_id: str):
+    result = await db.empresas_externas.delete_one({"id": company_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Empresa não encontrada")
+    return {"message": "Empresa eliminada com sucesso"}
 
 # Include the router in the main app
 app.include_router(api_router)
