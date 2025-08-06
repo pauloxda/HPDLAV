@@ -182,15 +182,18 @@ backend:
 
   - task: "Monthly washes endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented GET /api/lavagens/month/{year}/{month} to filter washes by month/year"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Monthly washes endpoint working correctly. GET /api/lavagens/month/{year}/{month} filters washes by specified month and year with proper date parsing."
 
   - task: "Delete wash endpoint"
     implemented: true
