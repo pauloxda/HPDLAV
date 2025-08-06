@@ -122,15 +122,18 @@ backend:
 
   - task: "Wash registration CRUD endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"  
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/lavagens, GET /api/lavagens with all required fields including data, tipo_veiculo, area_negocio, lavador, tipo_lavagem, empresa, matricula, valor, observacoes"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All CRUD operations working perfectly. POST /api/lavagens creates wash records with all Portuguese fields (Cisterna, Alimentar, Anfílófio Sousa, etc.). GET /api/lavagens retrieves records correctly. DELETE /api/lavagens/{id} removes records successfully."
 
   - task: "Custom washers management endpoints"
     implemented: true
