@@ -107,15 +107,18 @@ user_problem_statement: "Aplicação de gestão de lavagens HPD com registo de l
 backend:
   - task: "Authentication system with fixed password"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/auth endpoint with fixed password HPD0909"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Authentication working correctly. POST /api/auth accepts HPD0909 password and returns authenticated: true. Correctly rejects wrong passwords with 401 status."
 
   - task: "Wash registration CRUD endpoints"
     implemented: true
