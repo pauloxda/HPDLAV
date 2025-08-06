@@ -137,15 +137,18 @@ backend:
 
   - task: "Custom washers management endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/lavadores and GET /api/lavadores to add/retrieve custom washers"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Custom washers management working correctly. POST /api/lavadores adds new washers with duplicate prevention. GET /api/lavadores retrieves all washers sorted by name."
 
   - task: "External companies management endpoints"
     implemented: true
