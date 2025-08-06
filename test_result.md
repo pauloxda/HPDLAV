@@ -152,15 +152,18 @@ backend:
 
   - task: "External companies management endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/empresas-externas and GET /api/empresas-externas for external companies management"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: External companies management working correctly. POST /api/empresas-externas adds new companies with duplicate prevention. GET /api/empresas-externas retrieves all companies sorted by name."
 
   - task: "Daily washes endpoint"
     implemented: true
