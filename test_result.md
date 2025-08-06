@@ -167,15 +167,18 @@ backend:
 
   - task: "Daily washes endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented GET /api/lavagens/today to filter washes by current date"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Daily washes endpoint working correctly. GET /api/lavagens/today filters and returns washes for current date in proper format."
 
   - task: "Monthly washes endpoint"
     implemented: true
