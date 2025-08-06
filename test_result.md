@@ -101,3 +101,172 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Aplicação de gestão de lavagens HPD com registo de lavagens, agendamentos, relatórios diários/mensais e configurações. Password de administrador: HPD0909"
+
+backend:
+  - task: "Authentication system with fixed password"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/auth endpoint with fixed password HPD0909"
+
+  - task: "Wash registration CRUD endpoints"
+    implemented: true
+    working: "NA"
+    file: "server.py"  
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/lavagens, GET /api/lavagens with all required fields including data, tipo_veiculo, area_negocio, lavador, tipo_lavagem, empresa, matricula, valor, observacoes"
+
+  - task: "Custom washers management endpoints"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/lavadores and GET /api/lavadores to add/retrieve custom washers"
+
+  - task: "External companies management endpoints"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/empresas-externas and GET /api/empresas-externas for external companies management"
+
+  - task: "Daily washes endpoint"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented GET /api/lavagens/today to filter washes by current date"
+
+  - task: "Monthly washes endpoint"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented GET /api/lavagens/month/{year}/{month} to filter washes by month/year"
+
+  - task: "Delete wash endpoint"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented DELETE /api/lavagens/{wash_id} for configuration management"
+
+frontend:
+  - task: "Authentication system with password login"
+    implemented: true
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented login form with fixed password HPD0909 validation against backend"
+
+  - task: "Navigation between sections"
+    implemented: true
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented navigation tabs for Registo, Agendamentos, Dia Atual, Mensal, Relatórios, Configurações"
+
+  - task: "Complete wash registration form"
+    implemented: true
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented full registration form with all specified fields: data, tipo_veiculo, area_negocio, lavador, tipo_lavagem, empresa (interna/externa), matricula_trator/reboque, valor, observacoes"
+
+  - task: "Dynamic washers management"
+    implemented: true
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented adding custom washers with + button and dropdown integration"
+
+  - task: "Dynamic external companies management"
+    implemented: true
+    working: "NA"
+    file: "App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented adding external companies when empresa_tipo is externa"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Authentication system with fixed password"
+    - "Wash registration CRUD endpoints"
+    - "Complete wash registration form"
+    - "Dynamic washers management"
+    - "Dynamic external companies management"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Created complete HPD wash management application with authentication (password HPD0909), full wash registration form with all specified fields, and dynamic management of washers/companies. Ready for backend testing of all endpoints."
