@@ -197,15 +197,18 @@ backend:
 
   - task: "Delete wash endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented DELETE /api/lavagens/{wash_id} for configuration management"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Delete wash endpoint working correctly. DELETE /api/lavagens/{wash_id} removes wash records successfully and returns proper success message. Returns 404 for non-existent records."
 
 frontend:
   - task: "Authentication system with password login"
